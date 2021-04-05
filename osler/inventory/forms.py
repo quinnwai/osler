@@ -14,7 +14,7 @@ class DrugForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(DrugForm, self).__init__(*args, **kwargs)
 
-        self.helper = FormHelper(self)
+        self.helper = FormHelper(self) # defined so that crispy forms front-end is simple
         self.helper.form_method = 'post'
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-lg-2'
@@ -26,6 +26,7 @@ class DuplicateDrugForm(ModelForm):
         model = models.Drug
         fields = ['name', 'lot_number', 'manufacturer']
 
+    # TODO: figure out set up for drug forms
     def __init__(self, *args, **kwargs):
         super(DuplicateDrugForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper(self)

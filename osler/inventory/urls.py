@@ -6,6 +6,7 @@ from osler.inventory import views
 
 app_name = 'inventory'
 unwrapped_urlconf = [
+    # path is updated version of re_path without regex
     re_path(
         r'^$',
         views.DrugListView.as_view(),

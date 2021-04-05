@@ -21,7 +21,9 @@ class DrugCategory(models.Model):
 
 class MeasuringUnit(models.Model):
 
+    # class within class for metadata specifications
     class Meta:
+        # how to order when retrieving list
         ordering = ['name',]
 
     name = models.CharField(max_length=50, primary_key=True, validators=[validate_name])
@@ -49,6 +51,7 @@ class Drug(models.Model):
 
     name = models.CharField(max_length=100, blank=False, validators=[validate_name])
 
+    # https://docs.djangoproject.com/en/3.1/topics/db/examples/many_to_one/
     unit = models.ForeignKey(MeasuringUnit, on_delete=models.PROTECT)
 
     dose = models.FloatField(blank=False, null=False)
@@ -63,6 +66,9 @@ class Drug(models.Model):
 
     manufacturer = models.ForeignKey(Manufacturer, on_delete=models.PROTECT)
 
+    # used to access metadata: user than created drug, datetime of create/update/delete, etc
+    # also enables reverting to past model... interesting!
+    # TODO: useful for day/time sign up sheets?
     history = HistoricalRecords()
 
     def pre_expire(self):

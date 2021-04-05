@@ -44,28 +44,35 @@ class DrugListView(ListView):
         return context
 
 class PreDrugAddNew(FormView):
-    template_name = 'inventory/pre_add_new_drug.html'
-    form_class = forms.DuplicateDrugForm
+    template_name = 'inventory/pre_add_new_drug.html'  # actual front end view of it (using crispy forms helps here)
+    form_class = forms.DuplicateDrugForm # specify associate form from forms.py
 
     def form_valid(self, form):
+        # QW: this seems useful as communication with database
+
+        # form.cleaned_data is like json assoc array (cleans + validates)
         name_str = form.cleaned_data['name'].capitalize()
         lot_number_str = form.cleaned_data['lot_number'].upper()
         manufacturer_str = form.cleaned_data['manufacturer']
 
+        # query preparation below
         q = {
             "name": name_str,
             "lot_number": lot_number_str,
             "manufacturer": manufacturer_str
         }
 
-        querystr = urllib.parse.urlencode(q)
+        querystr = urllib.parse.urlencode(q) # prepare
 
+        # post into new columns (FIXME: why does drug-add-new when it's listed as add_new_drug work)
         add_new_drug_url = "%s?%s" % (reverse("inventory:drug-add-new"), querystr)
 
         matching_drugs = models.Drug.objects.filter(name=name_str, lot_number=lot_number_str, manufacturer=manufacturer_str)
 
+        # interpret query
+        # Info: https://stackoverflow.com/questions/11241668/what-is-reverse-in-django
         if len(matching_drugs) > 0:
-            predrug_select_url = "%s?%s" % (reverse("inventory:predrug-select"), querystr)
+            predrug_select_url = "%s?%s" % (reverse("inventory:predrug-select"), querystr) # reverse allows alias by name of link
             return HttpResponseRedirect(predrug_select_url)
 
         return HttpResponseRedirect(add_new_drug_url)
